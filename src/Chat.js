@@ -5,9 +5,12 @@ import MicIcon from '@material-ui/icons/Mic';
 import React, { useState } from 'react';
 import "./Chat.css";
 import axios from './axios.js';
+import { useStateValue } from './StateProvider';
 
 function Chat({ messages }) {
     const [input, setInput] = useState('');
+    const [{ user, room }] = useStateValue();
+
 
     const sendMessage = async (e) => {
         console.log('sending')
@@ -15,9 +18,10 @@ function Chat({ messages }) {
 
         await axios.post('/messages/new', {
             message: input,
-            name: "Demo App",
+            name: !!user ? user.displayName : "unkown",
             timestamp: new Date().toString(),
-            received: false
+            received: false,
+            roomId: !!room ? room.roomId : "unkown"
         });
 
         setInput('');
@@ -29,7 +33,7 @@ function Chat({ messages }) {
                 <Avatar />
                 <div className="chat_headerInfo">
                     <h3>Room name</h3>
-                    <p>Last seen at...</p>
+                    <p>Last seen at {messages[messages.length -1]?.timestamp.split(" GMT")[0]}</p>
                 </div>
                 <div className="chat_headerRight">
                     <IconButton>
@@ -46,10 +50,12 @@ function Chat({ messages }) {
 
             <div className="chat_body">
                 {messages.map(message => (
-                    <p className={`chat_message ${message.received && "chat_reciever"}`}>
+                    <p className={`chat_message ${message.name === user.displayName /**
+                        TODO: change to user unique identifier
+                    */ && "chat_sender"}`}>
                         <span className="chat_name">{message.name}</span>
                         {message.message}
-                        <span className="chat_timestamp">{message.timestamp}</span>
+                        <span className="chat_timestamp">{message.timestamp.split(" GMT")[0]}</span>
                     </p>    
                 ))}
             </div>

@@ -6,14 +6,16 @@ import Sidebar from './Sidebar';
 import Pusher from 'pusher-js';
 import axios from './axios.js';
 import Login from './Login';
+import { useStateValue } from './StateProvider';
 
 function App() {
   const [messages, setMessages] = useState([]);
-  const [user, setUser] = useState(null);
+  const [{ user }, dispatchUser] = useStateValue();
+  const [{ room }, dispachRoom] = useStateValue();
 
   useEffect(() => {
     axios.get('/messages/sync').then(response => {
-      setMessages(response.data);
+      setMessages(response.data.filter((msg) => msg.roomId === room.roomId));
     })
   }, [])
 
@@ -23,7 +25,7 @@ function App() {
     });
     const channel = pusher.subscribe('messages');
     channel.bind('inserted', function(newMessage) {
-      alert(JSON.stringify(newMessage));
+      //alert(JSON.stringify(newMessage));
       setMessages([...messages, newMessage])
     });
 
@@ -45,7 +47,7 @@ function App() {
             <Sidebar />
 
             <Switch>
-              <Route path="/rooms/:roomId">
+              <Route path="/rooms/:room.roomId">
                 <Chat messages={messages}/>
               </Route>
               <Route path="/">

@@ -8,12 +8,14 @@ import { Avatar, IconButton } from '@material-ui/core';
 
 import { SearchOutlined } from "@material-ui/icons";
 import SidebarChat from './SidebarChat';
+import { useStateValue } from './StateProvider';
 
 function Sidebar() {
+    const [{ user }, dispatch] = useStateValue();
     return (
         <div className='sidebar'>
             <div className="sidebar_header">
-                <Avatar src="https://avatars.githubusercontent.com/u/53401784?v=4"/>
+                <Avatar src={user?.photoURL}/>
                 <div className="sidebar_headerRight">
                     <IconButton>
                         <DonutLargeIcon />
