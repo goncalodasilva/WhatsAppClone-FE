@@ -7,9 +7,9 @@ import "./Chat.css";
 import axios from './axios.js';
 import { useStateValue } from './StateProvider';
 
-function Chat({ messages }) {
+function Chat({ messages, chatInfo }) {
     const [input, setInput] = useState('');
-    const [{ user, room }] = useStateValue();
+    const [{ user, chat }] = useStateValue();
 
 
     const sendMessage = async (e) => {
@@ -18,10 +18,12 @@ function Chat({ messages }) {
 
         await axios.post('/messages/new', {
             message: input,
-            name: !!user ? user.displayName : "unkown",
+            senderId: !!user ? user.uid : "unknown",
+            senderName: !!user ? user.displayName : "unknown",
             timestamp: new Date().toString(),
-            received: false,
-            roomId: !!room ? room.roomId : "unkown"
+            chatId: !!chat ? chat.chatId : "unknown"/*,
+            receiverId: !!chat ? chat.chatUserIds.length > 1 ? chat.chatUserIds : chat.chatId : "unknown",
+            receiverName: !!chat ? chat.chatName : "unknown"*/
         });
 
         setInput('');
@@ -32,7 +34,7 @@ function Chat({ messages }) {
             <div className="chat_header">
                 <Avatar />
                 <div className="chat_headerInfo">
-                    <h3>Room name</h3>
+                    <h3>{!!chatInfo ? chatInfo.chatName : "unknown"}</h3>
                     <p>Last seen at {messages[messages.length -1]?.timestamp.split(" GMT")[0]}</p>
                 </div>
                 <div className="chat_headerRight">
@@ -49,8 +51,9 @@ function Chat({ messages }) {
             </div>
 
             <div className="chat_body">
-                {messages.map(message => (
-                    <p className={`chat_message ${message.name === user.displayName /**
+                {messages
+                    .map(message => (
+                    <p className={`chat_message ${message.senderName === user.displayName /**
                         TODO: change to user unique identifier
                     */ && "chat_sender"}`}>
                         <span className="chat_name">{message.name}</span>

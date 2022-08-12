@@ -1,11 +1,14 @@
 export const initialState = {
     user: null,
-    room: {roomId: "6199f49c66661d545a0c9cfc", roomName: "Default Room"}
+    chat: null//{chatId: "6199f49c66661d545a0c9cfc", chatName: "Default Chat", chatUserIds: ["6199f49c66661d545a0c9cfc"]},
+    //chats: []
 };
 
 export const actionTypes = {
     SET_USER: "SET_USER",
-    SET_ROOM: "SET_ROOM"
+    SET_CHAT: "SET_CHAT"/*,
+    SET_CHATS: "SET_CHATS",
+    ADD_CHAT: "ADD_CHATS"*/
 };
 
 const reducer = (state, action) => {
@@ -16,11 +19,21 @@ const reducer = (state, action) => {
                 ...state,
                 user: action.user
             };
-        case actionTypes.SET_ROOM:
+        case actionTypes.SET_CHAT:
             return {
                 ...state,
-                room: action.room
+                chat: action.chat
             }
+        /*case actionTypes.SET_CHATS:
+            return {
+                ...state,
+                chats: action.chats
+            }
+        case actionTypes.ADD_CHAT:
+            return {
+                ...state,
+                chats: [...state.chats, action.chat]
+            }*/
         default:
             return state;
     }

@@ -1,21 +1,23 @@
 import React from 'react'
 import "./Sidebar.css"
 
+
 import DonutLargeIcon from '@material-ui/icons/DonutLarge';
 import ChatIcon from '@material-ui/icons/Chat';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { Avatar, IconButton } from '@material-ui/core';
 
-import { SearchOutlined } from "@material-ui/icons";
+import { MessageSharp, SearchOutlined } from "@material-ui/icons";
 import SidebarChat from './SidebarChat';
 import { useStateValue } from './StateProvider';
 
-function Sidebar() {
+function Sidebar(chats) {
     const [{ user }, dispatch] = useStateValue();
+
     return (
         <div className='sidebar'>
             <div className="sidebar_header">
-                <Avatar src={user?.photoURL}/>
+                <Avatar src={user?.photoURL} referrerPolicy="no-referrer"/>
                 <div className="sidebar_headerRight">
                     <IconButton>
                         <DonutLargeIcon />
@@ -37,10 +39,10 @@ function Sidebar() {
             </div>
 
             <div className="sidebar_chats">
-            <SidebarChat />
-            <SidebarChat />
-            <SidebarChat />
-            <SidebarChat />
+                {!!chats && !!chats.chats && Array.isArray(chats.chats) && chats.chats.length > 0 ? 
+                    chats.chats.map(c => (
+                        <SidebarChat key={c.chatId} chatInfo={c}/>
+                    )) : null}
             </div>
         </div>
     )
